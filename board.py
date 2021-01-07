@@ -7,9 +7,11 @@ class Board:
     def __init__(self):
         self.board = self.piecesInit()
         self.moves = []
-        self.movePiece([7,7],[2,0])
-        self.movePiece([7,3],[2,2])
-
+        self.killed = []
+        self.OldPos = None
+        # self.movePiece([7,7],[2,0])
+        # self.movePiece([7,3],[2,2])
+        self.dt  = 0.1
 
         self.selectedPiece = None
         self.playerTurn = "b"
@@ -66,16 +68,14 @@ class Board:
 
     
     def movePiece(self, pos1, pos2):
-        if self.board[pos1[0]][pos1[1]]:
-            self.board[pos1[0]][pos1[1]].row = pos2[0]
-            self.board[pos1[0]][pos1[1]].col = pos2[1]
+        self.OldPos = tuple(pos1)
         if self.board[pos2[0]][pos2[1]]:
             self.board[pos2[0]][pos2[1]].row = pos1[0]
-            self.board[pos2[0]][pos2[1]].col = pos1[0]
+            self.board[pos2[0]][pos2[1]].col = pos1[1]
 
-        temp = self.board[pos1[0]][pos1[1]]
-        self.board[pos1[0]][pos1[1]] = self.board[pos2[0]][pos2[1]]
-        self.board[pos2[0]][pos2[1]] = temp
+        self.board[pos2[0]][pos2[1]] = self.board[pos1[0]][pos1[1]]
+        if self.OldPos:
+            self.killed.append(self.OldPos)
         
 
     def getBoardPos(self,point):

@@ -6,6 +6,7 @@ class Piece:
     def __init__(self,row,col,color):
         self.row = row
         self.col = col
+        self.x,self.y = self.col*boxsize,self.row*boxsize
         self.selected = False
 
         if color == "w":
@@ -19,20 +20,35 @@ class Piece:
 
     def draw(self,win):
         if self.selected:
-            pg.draw.rect(win,(255,0,0),(self.col*boxsize+5//2,self.row*boxsize+5//2,boxsize-5,boxsize-5))
+            pg.draw.rect(win,(255,0,0),(self.x+5//2,self.y+5//2,boxsize-5,boxsize-5))
             ls = 10
             
             if isBlackCell([self.row,self.col]):
-                pg.draw.rect(win,(75,75,75),(self.col*boxsize+ls//2,self.row*boxsize+ls//2,boxsize-ls,boxsize-ls))
+                pg.draw.rect(win,(75,75,75),(self.x+ls//2,self.y+ls//2,boxsize-ls,boxsize-ls))
             else:
-                pg.draw.rect(win,(255,255,255),(self.col*boxsize+ls//2,self.row*boxsize+ls//2,boxsize-ls,boxsize-ls))
+                pg.draw.rect(win,(255,255,255),(self.x+ls//2,self.y+ls//2,boxsize-ls,boxsize-ls))
         else:
             if isBlackCell([self.row,self.col]):
-                pg.draw.rect(win,(75,75,75),(self.col*boxsize,self.row*boxsize,boxsize,boxsize))
+                pg.draw.rect(win,(75,75,75),(self.x,self.y,boxsize,boxsize))
             else:
-                pg.draw.rect(win,(255,255,255),(self.col*boxsize,self.row*boxsize,boxsize,boxsize))
+                pg.draw.rect(win,(255,255,255),(self.x,self.y,boxsize,boxsize))
         
-        win.blit(self.img,(self.col*boxsize+padding//2, self.row*boxsize+padding//2))
+        win.blit(self.img,(self.x+padding//2, self.y+padding//2))
+    
+    def movePiece(self,win, pos2,dt):
+        duration = 12
+        if dt >= duration:
+            self.x = pos2[0]
+            self.y = pos2[1]
+            return None
+        perDone = dt / duration
+        xChange = int((pos2[0] - self.x)*perDone)
+        yChange = int((pos2[1] - self.y)*perDone)
+        self.x = self.x + xChange
+        self.y = self.y + yChange
+
+        dt += 1/60
+        return dt
 
     def setSelected(self,selected):
         self.selected = selected
